@@ -10,6 +10,8 @@ export default function ObjectNode({
   onUpdateProperties,
   onDuplicate,
   onStartConnection,
+  onConnectionDropOnPort,
+  isConnectionActive,
 }) {
   const headerStyle = {
     background: 'var(--color-surface)',
@@ -81,7 +83,7 @@ export default function ObjectNode({
       });
     }
 
-    const shouldShowPorts = isSelected; // Show on selection
+    const shouldShowPorts = isSelected || isConnectionActive; // Show on selection or when dragging connection
 
     return shouldShowPorts
       ? ports.map((port) => (
@@ -92,6 +94,12 @@ export default function ObjectNode({
               e.stopPropagation();
               if (onStartConnection) {
                 onStartConnection(object.id, port.id, e);
+              }
+            }}
+            onMouseUp={(e) => {
+              e.stopPropagation();
+              if (onConnectionDropOnPort && isConnectionActive) {
+                onConnectionDropOnPort(object.id, port.id);
               }
             }}
             style={{

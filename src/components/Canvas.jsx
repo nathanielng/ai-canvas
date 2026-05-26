@@ -15,6 +15,8 @@ export default function Canvas({
 }) {
   const [draggingObject, setDraggingObject] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [connectionDrag, setConnectionDrag] = useState(null);
+  const [previewEnd, setPreviewEnd] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
 
   const handleCanvasMouseDown = (e) => {
@@ -39,17 +41,39 @@ export default function Canvas({
   };
 
   const handleMouseMove = (e) => {
-    if (!draggingObject || !canvasRef.current) return;
+    if (!canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = Math.max(0, e.clientX - rect.left - dragOffset.x);
-    const y = Math.max(0, e.clientY - rect.top - dragOffset.y);
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-    onUpdateObject(draggingObject, { position: { x, y } });
+    if (connectionDrag) {
+      // Update preview line endpoint
+      setPreviewEnd({ x: mouseX, y: mouseY });
+    } else if (draggingObject) {
+      const x = Math.max(0, mouseX - dragOffset.x);
+      const y = Math.max(0, mouseY - dragOffset.y);
+      onUpdateObject(draggingObject, { position: { x, y } });
+    }
   };
 
   const handleMouseUp = () => {
     setDraggingObject(null);
+    setConnectionDrag(null);
+  };
+
+  const handleConnectionDropOnPort = (targetObjectId, targetPortId) => {
+    if (!connectionDrag) return;
+
+    // Don't connect to self
+    if (connectionDrag.sourceObjectId === targetObjectId) {
+      setConnectionDrag(null);
+      return;
+    }
+
+    // Create the connector
+    onAddConnector(connectionDrag.sourceObjectId, targetObjectId);
+    setConnectionDrag(null);
   };
 
   const handleDuplicate = (objectId) => {
@@ -62,8 +86,27 @@ export default function Canvas({
   };
 
   const handleStartConnection = (sourceObjectId, sourcePortId, event) => {
-    // TODO: Implement connection drag logic
-    console.log('Start connection from:', sourceObjectId, sourcePortId);
+    event.stopPropagation();
+    const sourceObject = canvas.objects.find((o) => o.id === sourceObjectId);
+    if (!sourceObject) return;
+
+    // Calculate port position
+    let portX, portY;
+    if (layoutDirection === 'top-to-bottom') {
+      portX = sourceObject.position.x + sourceObject.size.width / 2;
+      portY = sourcePortId === 'top' ? sourceObject.position.y : sourceObject.position.y + sourceObject.size.height;
+    } else {
+      portY = sourceObject.position.y + sourceObject.size.height / 2;
+      portX = sourcePortId === 'left' ? sourceObject.position.x : sourceObject.position.x + sourceObject.size.width;
+    }
+
+    setConnectionDrag({
+      sourceObjectId,
+      sourcePortId,
+      startX: portX,
+      startY: portY,
+    });
+    setPreviewEnd({ x: portX, y: portY });
   };
 
   return (
@@ -103,6 +146,20 @@ export default function Canvas({
           );
         })}
 
+        {connectionDrag && (
+          <line
+            x1={connectionDrag.startX}
+            y1={connectionDrag.startY}
+            x2={previewEnd.x}
+            y2={previewEnd.y}
+            className="connector-preview"
+            stroke="#6fb3ff"
+            strokeWidth="2"
+            strokeDasharray="5,5"
+            opacity="0.7"
+          />
+        )}
+
         <defs>
           <marker
             id="arrowhead"
@@ -127,6 +184,8 @@ export default function Canvas({
           onDelete={() => onDeleteObject(object.id)}
           onDuplicate={() => handleDuplicate(object.id)}
           onStartConnection={handleStartConnection}
+          onConnectionDropOnPort={handleConnectionDropOnPort}
+          isConnectionActive={!!connectionDrag}
           onUpdateProperties={(props) =>
             onUpdateObject(object.id, { properties: props })
           }

@@ -61,6 +61,11 @@
   transform: scale(1.15);
 }
 
+.connector-preview {
+  pointer-events: none;
+  stroke-linecap: round;
+}
+
 .object-controls {
   z-index: 1000;
   background: var(--color-surface);
