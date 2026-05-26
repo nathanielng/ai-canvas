@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import ObjectNode from './ObjectNode.jsx';
 import { getConnectorPath, getPortPosition } from '../utils/connectorPaths.js';
+import { snapPosition } from '../utils/grid.js';
 import '../styles/Canvas.css';
 
 export default function Canvas({
@@ -52,9 +53,12 @@ export default function Canvas({
       // Update preview line endpoint
       setPreviewEnd({ x: mouseX, y: mouseY });
     } else if (draggingObject) {
-      const x = Math.max(0, mouseX - dragOffset.x);
-      const y = Math.max(0, mouseY - dragOffset.y);
-      onUpdateObject(draggingObject, { position: { x, y } });
+      let x = Math.max(0, mouseX - dragOffset.x);
+      let y = Math.max(0, mouseY - dragOffset.y);
+
+      // Snap to grid (20px)
+      const snapped = snapPosition(x, y, 20);
+      onUpdateObject(draggingObject, { position: { x: snapped.x, y: snapped.y } });
     }
   };
 
