@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import ObjectNode from './ObjectNode.jsx';
+import { getConnectorPath, getPortPosition } from '../utils/connectorPaths.js';
 import '../styles/Canvas.css';
 
 export default function Canvas({
@@ -125,19 +126,22 @@ export default function Canvas({
 
           if (!source || !target) return null;
 
-          const x1 = source.position.x + source.size.width / 2;
-          const y1 = source.position.y + source.size.height;
-          const x2 = target.position.x + target.size.width / 2;
-          const y2 = target.position.y;
+          // Get source port position (use bottom for top-to-bottom, right for left-to-right)
+          const sourcePortId = layoutDirection === 'top-to-bottom' ? 'bottom' : 'right';
+          const targetPortId = layoutDirection === 'top-to-bottom' ? 'top' : 'left';
+
+          const sourcePos = getPortPosition(source, layoutDirection, sourcePortId);
+          const targetPos = getPortPosition(target, layoutDirection, targetPortId);
+
+          const connectorStyle = canvas.metadata.connectorStyle || 'elbow';
+          const pathD = getConnectorPath(sourcePos, targetPos, connectorStyle);
 
           return (
             <g key={conn.id}>
-              <line
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
+              <path
+                d={pathD}
                 className="connector"
+                fill="none"
                 stroke={conn.properties.stroke || '#4a9eff'}
                 strokeWidth={conn.properties.strokeWidth || 2}
                 markerEnd="url(#arrowhead)"
@@ -146,19 +150,25 @@ export default function Canvas({
           );
         })}
 
-        {connectionDrag && (
-          <line
-            x1={connectionDrag.startX}
-            y1={connectionDrag.startY}
-            x2={previewEnd.x}
-            y2={previewEnd.y}
-            className="connector-preview"
-            stroke="#6fb3ff"
-            strokeWidth="2"
-            strokeDasharray="5,5"
-            opacity="0.7"
-          />
-        )}
+        {connectionDrag && (() => {
+          const connectorStyle = canvas.metadata.connectorStyle || 'elbow';
+          const pathD = getConnectorPath(
+            { x: connectionDrag.startX, y: connectionDrag.startY },
+            previewEnd,
+            connectorStyle
+          );
+          return (
+            <path
+              d={pathD}
+              className="connector-preview"
+              fill="none"
+              stroke="#6fb3ff"
+              strokeWidth="2"
+              strokeDasharray="5,5"
+              opacity="0.7"
+            />
+          );
+        })()}
 
         <defs>
           <marker

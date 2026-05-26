@@ -47,3 +47,9 @@
   filter: drop-shadow(0 0 6px var(--color-accent));
   opacity: 1;
 }
+
+.connector-preview {
+  pointer-events: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

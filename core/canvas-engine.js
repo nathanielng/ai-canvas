@@ -9,6 +9,7 @@ export function createCanvas(metadata = {}) {
     metadata: {
       name: 'Untitled Canvas',
       layoutDirection: 'top-to-bottom',
+      connectorStyle: 'elbow',
       createdAt: new Date().toISOString(),
       modifiedAt: new Date().toISOString(),
       ...metadata,
