@@ -244,6 +244,18 @@ export default function ObjectNode({
   };
 
   const renderDragHandle = (position) => {
+    const baseLeft = object.position.x;
+    const baseTop = object.position.y;
+    const objWidth = object.size.width;
+    const objHeight = object.size.height;
+
+    const handlePositions = {
+      'top-left': { left: `${baseLeft - 5}px`, top: `${baseTop - 5}px` },
+      'top-right': { left: `${baseLeft + objWidth - 5}px`, top: `${baseTop - 5}px` },
+      'bottom-left': { left: `${baseLeft - 5}px`, top: `${baseTop + objHeight - 5}px` },
+      'bottom-right': { left: `${baseLeft + objWidth - 5}px`, top: `${baseTop + objHeight - 5}px` },
+    };
+
     return (
       <div
         key={`handle-${position}`}
@@ -262,15 +274,8 @@ export default function ObjectNode({
           background: 'var(--color-accent)',
           border: '2px solid var(--color-background)',
           cursor: position.includes('left') ? (position.includes('top') ? 'nwse-resize' : 'nesw-resize') : (position.includes('top') ? 'nesw-resize' : 'nwse-resize'),
-          ...(() => {
-            const handlePositions = {
-              'top-left': { left: '-5px', top: '-5px' },
-              'top-right': { right: '-5px', top: '-5px' },
-              'bottom-left': { left: '-5px', bottom: '-5px' },
-              'bottom-right': { right: '-5px', bottom: '-5px' },
-            };
-            return handlePositions[position] || {};
-          })(),
+          zIndex: 1000,
+          ...handlePositions[position],
         }}
       />
     );

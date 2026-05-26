@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ObjectNode from './ObjectNode.jsx';
 import { getConnectorPath, getPortPosition } from '../utils/connectorPaths.js';
 import { snapPosition } from '../utils/grid.js';
@@ -21,13 +21,14 @@ export default function Canvas({
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [panningCanvas, setPanningCanvas] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [spacePressed, setSpacePressed] = useState(false);
   const [connectionDrag, setConnectionDrag] = useState(null);
   const [previewEnd, setPreviewEnd] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
 
   const handleCanvasMouseDown = (e) => {
-    // Middle mouse button (button 1) to pan
-    if (e.button === 1) {
+    // Middle mouse button (button 1) or Space+Left click to pan
+    if (e.button === 1 || (e.button === 0 && spacePressed)) {
       e.preventDefault();
       setPanningCanvas(true);
       setPanStart({
@@ -43,6 +44,31 @@ export default function Canvas({
       onSelectedObjectChange(null);
     }
   };
+
+  // Handle space key for panning
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setSpacePressed(true);
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setSpacePressed(false);
+        setPanningCanvas(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   const handleObjectMouseDown = (e, objectId) => {
     if (e.button !== 0) return; // Left click only
