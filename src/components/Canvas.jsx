@@ -72,8 +72,15 @@ export default function Canvas({
       return;
     }
 
-    // Create the connector
-    onAddConnector(connectionDrag.sourceObjectId, targetObjectId);
+    // Create the connector with port information
+    onAddConnector(
+      connectionDrag.sourceObjectId,
+      targetObjectId,
+      {
+        sourcePort: connectionDrag.sourcePortId,
+        targetPort: targetPortId,
+      }
+    );
     setConnectionDrag(null);
   };
 
@@ -91,23 +98,15 @@ export default function Canvas({
     const sourceObject = canvas.objects.find((o) => o.id === sourceObjectId);
     if (!sourceObject) return;
 
-    // Calculate port position
-    let portX, portY;
-    if (layoutDirection === 'top-to-bottom') {
-      portX = sourceObject.position.x + sourceObject.size.width / 2;
-      portY = sourcePortId === 'top' ? sourceObject.position.y : sourceObject.position.y + sourceObject.size.height;
-    } else {
-      portY = sourceObject.position.y + sourceObject.size.height / 2;
-      portX = sourcePortId === 'left' ? sourceObject.position.x : sourceObject.position.x + sourceObject.size.width;
-    }
+    const sourcePos = getPortPosition(sourceObject, layoutDirection, sourcePortId);
 
     setConnectionDrag({
       sourceObjectId,
       sourcePortId,
-      startX: portX,
-      startY: portY,
+      startX: sourcePos.x,
+      startY: sourcePos.y,
     });
-    setPreviewEnd({ x: portX, y: portY });
+    setPreviewEnd({ x: sourcePos.x, y: sourcePos.y });
   };
 
   return (
@@ -126,9 +125,9 @@ export default function Canvas({
 
           if (!source || !target) return null;
 
-          // Get source port position (use bottom for top-to-bottom, right for left-to-right)
-          const sourcePortId = layoutDirection === 'top-to-bottom' ? 'bottom' : 'right';
-          const targetPortId = layoutDirection === 'top-to-bottom' ? 'top' : 'left';
+          // Use stored port info, or fallback to layout defaults
+          const sourcePortId = conn.properties.sourcePort || (layoutDirection === 'top-to-bottom' ? 'bottom' : 'right');
+          const targetPortId = conn.properties.targetPort || (layoutDirection === 'top-to-bottom' ? 'top' : 'left');
 
           const sourcePos = getPortPosition(source, layoutDirection, sourcePortId);
           const targetPos = getPortPosition(target, layoutDirection, targetPortId);
