@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasEngine } from './hooks/useCanvasEngine.js';
+import { useTheme } from './hooks/useTheme.js';
 import Canvas from './components/Canvas.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import './App.css';
 
 export default function App() {
   const fileInputRef = useRef(null);
+  useTheme(); // Initialize theme system
   const {
     canvas,
     autoSave,

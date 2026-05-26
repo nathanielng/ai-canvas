@@ -1,3 +1,25 @@
+:root {
+  --color-background: #1a1a2e;
+  --color-surface: #16213e;
+  --color-surface-elevated: #2a2a3e;
+  --color-border: #333333;
+  --color-text: #ffffff;
+  --color-text-secondary: #b0b0b0;
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-accent: #4a9eff;
+  --color-accent-light: #6fb3ff;
+  --color-accent-dark: #2a7dd8;
+  --color-success: #4caf50;
+  --color-warning: #ffd580;
+  --color-error: #ff6b6b;
+  --color-info: #4a9eff;
+
+  --border-radius: 8px;
+  --border-width: 2px;
+  --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-large: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,8 +32,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0d0d0d;
-  color: #fff;
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .app {
@@ -19,6 +41,7 @@ body {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  background: var(--color-background);
 }
 
 .header {
@@ -26,20 +49,21 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  background: #1a1a1a;
-  border-bottom: 1px solid #333;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   gap: 20px;
 }
 
 .header h1 {
   font-size: 24px;
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .header-info {
   flex: 1;
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted);
 }
 
 .header-actions {
@@ -52,26 +76,34 @@ body {
   flex: 1;
   gap: 1px;
   overflow: hidden;
-  background: #333;
+  background: var(--color-border);
 }
 
 .btn {
   padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) / 2);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.btn:hover {
+  background: var(--color-border);
+  border-color: var(--color-accent);
 }
 
 .btn-primary {
-  background: #0066ff;
+  background: var(--color-accent);
   color: white;
+  border: none;
 }
 
 .btn-primary:hover {
-  background: #0052cc;
+  background: var(--color-accent-dark);
 }
 
 .btn-small {
@@ -80,12 +112,23 @@ body {
 }
 
 .btn-danger {
-  background: #ff4444;
+  background: var(--color-error);
   color: white;
+  border: none;
 }
 
 .btn-danger:hover {
   background: #dd0000;
+}
+
+.btn-success {
+  background: var(--color-success);
+  color: white;
+  border: none;
+}
+
+.btn-success:hover {
+  background: #45a049;
 }
 
 .btn-block {

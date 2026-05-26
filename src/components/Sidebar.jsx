@@ -67,9 +67,18 @@ export default function Sidebar({ canvas, onCreateObject, onSetLayoutDirection }
       <section className="sidebar-section">
         <h3>Canvas Info</h3>
         <ul className="info-list">
-          <li>Objects: {canvas.objects.length}</li>
-          <li>Connectors: {canvas.connectors.length}</li>
-          <li>Layout: {canvas.metadata.layoutDirection}</li>
+          <li>
+            <span>Objects</span>
+            <strong>{canvas.objects.length}</strong>
+          </li>
+          <li>
+            <span>Connectors</span>
+            <strong>{canvas.connectors.length}</strong>
+          </li>
+          <li>
+            <span>Layout</span>
+            <strong>{canvas.metadata.layoutDirection === 'top-to-bottom' ? '↓' : '→'}</strong>
+          </li>
         </ul>
       </section>
     </aside>

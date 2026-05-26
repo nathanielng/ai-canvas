@@ -1,10 +1,28 @@
 .canvas {
   flex: 1;
-  background: #0d0d0d url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23222" x="0" y="0" width="40" height="40"/><circle fill="%23333" cx="20" cy="20" r="1"/></svg>');
+  background: var(--color-background) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="var(--color-surface)" x="0" y="0" width="40" height="40"/><circle fill="var(--color-border)" cx="20" cy="20" r="1"/></svg>');
   background-size: 40px 40px;
   position: relative;
   overflow: auto;
   user-select: none;
+}
+
+.canvas::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.canvas::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+.canvas::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+.canvas::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }
 
 .canvas-connections {
@@ -19,9 +37,11 @@
 .connector {
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: stroke 0.2s ease, filter 0.2s ease;
 }
 
 .connector:hover {
   stroke-width: 3;
-  filter: drop-shadow(0 0 3px rgba(74, 158, 255, 0.5));
+  filter: drop-shadow(0 0 6px var(--color-accent));
+  opacity: 1;
 }

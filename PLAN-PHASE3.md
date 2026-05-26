@@ -1,25 +1,25 @@
 # Phase 3: Flow Diagram UI Polish & Configuration
 
 **Status**: Planning  
-**Target**: Professional flow diagram UI inspired by canvas-original + configurable colors  
+**Target**: Professional flow diagram UI with polished styling and configurable colors  
 **Milestone**: Production-ready diagramming tool with polished UX
 
 ---
 
 ## Overview
 
-**Goal**: Transform Phase 1's minimal UI into a professional flow diagram tool matching canvas-original's visual style.
+**Goal**: Transform Phase 1's minimal UI into a professional, polished flow diagram tool.
 
 **Scope**:
 - Phase 3A: Node styling, connectors, text editing (1 week)
 - Phase 3B: Additional shapes (circles, diamonds) (3-4 days)
 - Phase 3C: Interaction polish (copy/paste, undo/redo, shortcuts) (1 week)
 
-**Key Insight**: canvas-original uses rounded rectangles, clear visual hierarchy, and dark theme. We'll adopt this aesthetic while keeping our simpler core engine.
+**Key Insight**: Professional flow diagram design uses rounded rectangles, clear visual hierarchy, and dark theme with accent colors for better UX.
 
 ---
 
-## Design Analysis: canvas-original
+## Design Analysis: Professional Flow Diagram UI
 
 ### What Works Well
 
@@ -120,7 +120,7 @@
 ### Phase 3A: Visual Polish (Week 1)
 
 #### 1. Node Redesign
-**Goal**: Rounded rectangles matching canvas-original
+**Goal**: Professional rounded rectangle nodes
 
 **Components**:
 - [ ] Update ObjectNode.jsx styling
@@ -150,7 +150,7 @@
 ```
 
 #### 2. Connector Visualization
-**Goal**: Curved/elbow connectors with arrows (like canvas-original)
+**Goal**: Curved/elbow connectors with arrows for clear data flow
 
 **Changes**:
 - [ ] Replace straight SVG lines with Bezier curves
@@ -198,7 +198,7 @@ export function useTheme(themeName = 'default') {
 **Goal**: Better button/input styling
 
 **Components**:
-- [ ] Update button styles (canvas-original has nice hover effects)
+- [ ] Update button styles (nice hover effects and visual feedback)
 - [ ] Better selected state (blue glow, not just outline)
 - [ ] Improved sidebar appearance
 - [ ] Header bar redesign
@@ -359,7 +359,7 @@ canvas/
 ```json
 {
   "name": "Canvas Default",
-  "description": "Professional dark theme inspired by canvas-original",
+  "description": "Professional dark theme for flow diagrams",
   "colors": {
     "background": "#1a1a2e",
     "surface": "#16213e",
@@ -467,7 +467,7 @@ canvas/
 6. ✅ Undo/redo works (Ctrl+Z / Ctrl+Y)
 7. ✅ All keyboard shortcuts functional
 8. ✅ Circle, diamond, parallelogram shapes render correctly
-9. ✅ UI matches canvas-original aesthetic
+9. ✅ UI has professional, polished aesthetic
 10. ✅ Theme can be customized and persisted
 
 ---
@@ -526,7 +526,7 @@ canvas/
 ## Recommendation
 
 **Start with Phase 3A** (theme + visual polish). This gets you:
-- Professional appearance matching canvas-original
+- Professional, polished appearance
 - Customizable colors (opens up theming for future)
 - Better UX (headers, sections, icons)
 
