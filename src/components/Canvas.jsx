@@ -19,11 +19,26 @@ export default function Canvas({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizingObject, setResizingObject] = useState(null);
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [panningCanvas, setPanningCanvas] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [connectionDrag, setConnectionDrag] = useState(null);
   const [previewEnd, setPreviewEnd] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
 
   const handleCanvasMouseDown = (e) => {
+    // Middle mouse button (button 1) to pan
+    if (e.button === 1) {
+      e.preventDefault();
+      setPanningCanvas(true);
+      setPanStart({
+        x: e.clientX,
+        y: e.clientY,
+        scrollLeft: canvasRef.current?.scrollLeft || 0,
+        scrollTop: canvasRef.current?.scrollTop || 0,
+      });
+      return;
+    }
+
     if (e.target === canvasRef.current) {
       onSelectedObjectChange(null);
     }
@@ -50,6 +65,15 @@ export default function Canvas({
     const rect = canvasRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
+
+    if (panningCanvas) {
+      // Pan canvas by scrolling
+      const deltaX = panStart.x - e.clientX;
+      const deltaY = panStart.y - e.clientY;
+      canvasRef.current.scrollLeft = panStart.scrollLeft + deltaX;
+      canvasRef.current.scrollTop = panStart.scrollTop + deltaY;
+      return;
+    }
 
     if (connectionDrag) {
       // Update preview line endpoint
@@ -103,6 +127,7 @@ export default function Canvas({
   const handleMouseUp = () => {
     setDraggingObject(null);
     setResizingObject(null);
+    setPanningCanvas(false);
     setConnectionDrag(null);
   };
 
