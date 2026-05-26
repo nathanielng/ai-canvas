@@ -39,24 +39,25 @@ function getCurvedPath(x1, y1, x2, y2) {
 }
 
 function getElbowPath(x1, y1, x2, y2) {
-  // Smart elbow routing: determine best path direction
+  // Double-elbow routing: 3-segment path for balanced connectors
+  // Segment 1: Horizontal/vertical from source
+  // Segment 2: Vertical/horizontal middle section
+  // Segment 3: Horizontal/vertical to target
+
   const dx = Math.abs(x2 - x1);
   const dy = Math.abs(y2 - y1);
 
-  let mx, my;
+  // Calculate midpoint for the elbow
+  const midX = x1 + (x2 - x1) * 0.5;
+  const midY = y1 + (y2 - y1) * 0.5;
 
-  // If targets are more separated horizontally, route vertically first
-  if (dx > dy) {
-    // Vertical first, then horizontal
-    mx = x1;
-    my = y1 + (y2 - y1) * 0.5;
-  } else {
-    // Horizontal first, then vertical
-    mx = x1 + (x2 - x1) * 0.5;
-    my = y1;
-  }
+  // Route: horizontal first, then vertical, then horizontal again
+  // This creates a more balanced double-elbow pattern
+  const m1x = x1 + (x2 - x1) * 0.3;  // 30% horizontal
+  const m2x = x1 + (x2 - x1) * 0.7;  // 70% horizontal
+  const m1y = y1 + (y2 - y1) * 0.5;  // 50% vertical
 
-  return `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`;
+  return `M ${x1} ${y1} L ${m1x} ${y1} L ${m1x} ${m1y} L ${m2x} ${m1y} L ${m2x} ${y2} L ${x2} ${y2}`;
 }
 
 export function getPortPosition(object, layoutDirection, portId) {
