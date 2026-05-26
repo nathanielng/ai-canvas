@@ -17,6 +17,8 @@ export default function Canvas({
 }) {
   const [draggingObject, setDraggingObject] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [resizingObject, setResizingObject] = useState(null);
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [connectionDrag, setConnectionDrag] = useState(null);
   const [previewEnd, setPreviewEnd] = useState({ x: 0, y: 0 });
   const canvasRef = useRef(null);
@@ -52,6 +54,42 @@ export default function Canvas({
     if (connectionDrag) {
       // Update preview line endpoint
       setPreviewEnd({ x: mouseX, y: mouseY });
+    } else if (resizingObject) {
+      // Handle resizing
+      const deltaX = e.clientX - resizeStart.x;
+      const deltaY = e.clientY - resizeStart.y;
+
+      let newWidth = resizeStart.width;
+      let newHeight = resizeStart.height;
+      let newX = resizeStart.objX;
+      let newY = resizeStart.objY;
+
+      const { corner } = resizingObject;
+
+      // Resize from corner, maintaining minimum size
+      if (corner.includes('right')) {
+        newWidth = Math.max(50, resizeStart.width + deltaX);
+      } else if (corner.includes('left')) {
+        newWidth = Math.max(50, resizeStart.width - deltaX);
+        newX = resizeStart.objX + deltaX;
+      }
+
+      if (corner.includes('bottom')) {
+        newHeight = Math.max(50, resizeStart.height + deltaY);
+      } else if (corner.includes('top')) {
+        newHeight = Math.max(50, resizeStart.height - deltaY);
+        newY = resizeStart.objY + deltaY;
+      }
+
+      // Snap to grid
+      const snappedPos = snapPosition(newX, newY, 20);
+      newWidth = snapPosition(newWidth, 0, 20).x;
+      newHeight = snapPosition(newHeight, 0, 20).x;
+
+      onUpdateObject(resizingObject.id, {
+        position: snappedPos,
+        size: { width: newWidth, height: newHeight },
+      });
     } else if (draggingObject) {
       let x = Math.max(0, mouseX - dragOffset.x);
       let y = Math.max(0, mouseY - dragOffset.y);
@@ -64,6 +102,7 @@ export default function Canvas({
 
   const handleMouseUp = () => {
     setDraggingObject(null);
+    setResizingObject(null);
     setConnectionDrag(null);
   };
 
@@ -86,6 +125,22 @@ export default function Canvas({
       }
     );
     setConnectionDrag(null);
+  };
+
+  const handleStartResize = (objectId, corner, event) => {
+    event.stopPropagation();
+    const object = canvas.objects.find((o) => o.id === objectId);
+    if (!object) return;
+
+    setResizingObject({ id: objectId, corner });
+    setResizeStart({
+      x: event.clientX,
+      y: event.clientY,
+      width: object.size.width,
+      height: object.size.height,
+      objX: object.position.x,
+      objY: object.position.y,
+    });
   };
 
   const handleDuplicate = (objectId) => {
@@ -206,6 +261,7 @@ export default function Canvas({
           onDuplicate={() => handleDuplicate(object.id)}
           onStartConnection={handleStartConnection}
           onConnectionDropOnPort={handleConnectionDropOnPort}
+          onStartResize={handleStartResize}
           isConnectionActive={!!connectionDrag}
           onUpdateProperties={(props) =>
             onUpdateObject(object.id, { properties: props })

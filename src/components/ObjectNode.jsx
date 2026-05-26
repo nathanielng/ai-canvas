@@ -11,6 +11,7 @@ export default function ObjectNode({
   onDuplicate,
   onStartConnection,
   onConnectionDropOnPort,
+  onStartResize,
   isConnectionActive,
 }) {
   const headerStyle = {
@@ -247,6 +248,12 @@ export default function ObjectNode({
       <div
         key={`handle-${position}`}
         className="drag-handle"
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          if (onStartResize) {
+            onStartResize(object.id, position, e);
+          }
+        }}
         style={{
           position: 'absolute',
           width: '10px',
@@ -254,7 +261,7 @@ export default function ObjectNode({
           borderRadius: '50%',
           background: 'var(--color-accent)',
           border: '2px solid var(--color-background)',
-          cursor: 'grab',
+          cursor: position.includes('left') ? (position.includes('top') ? 'nwse-resize' : 'nesw-resize') : (position.includes('top') ? 'nesw-resize' : 'nwse-resize'),
           ...(() => {
             const handlePositions = {
               'top-left': { left: '-5px', top: '-5px' },
