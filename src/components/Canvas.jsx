@@ -133,7 +133,13 @@ export default function Canvas({
           const targetPos = getPortPosition(target, layoutDirection, targetPortId);
 
           const connectorStyle = canvas.metadata.connectorStyle || 'elbow';
-          const pathD = getConnectorPath(sourcePos, targetPos, connectorStyle);
+          const pathD = getConnectorPath(
+            sourcePos,
+            targetPos,
+            connectorStyle,
+            sourcePortId,
+            targetPortId
+          );
 
           return (
             <g key={conn.id}>
@@ -154,7 +160,9 @@ export default function Canvas({
           const pathD = getConnectorPath(
             { x: connectionDrag.startX, y: connectionDrag.startY },
             previewEnd,
-            connectorStyle
+            connectorStyle,
+            connectionDrag.sourcePortId
+            // targetPort is unknown during preview, use sourcePort to guide routing
           );
           return (
             <path

@@ -1,6 +1,6 @@
 // Generate SVG paths for connectors based on style and port positions
 
-export function getConnectorPath(sourcePos, targetPos, style = 'elbow') {
+export function getConnectorPath(sourcePos, targetPos, style = 'elbow', sourcePort = null, targetPort = null) {
   const x1 = sourcePos.x;
   const y1 = sourcePos.y;
   const x2 = targetPos.x;
@@ -15,7 +15,7 @@ export function getConnectorPath(sourcePos, targetPos, style = 'elbow') {
 
     case 'elbow':
     default:
-      return getElbowPath(x1, y1, x2, y2);
+      return getElbowPath(x1, y1, x2, y2, sourcePort, targetPort);
   }
 }
 
@@ -38,22 +38,40 @@ function getCurvedPath(x1, y1, x2, y2) {
   return `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
 }
 
-function getElbowPath(x1, y1, x2, y2) {
-  // Simple single-elbow routing: clean L-shaped connectors
-  // Route: 50% in one direction, then complete the other direction
-  // Adapts to which direction has more distance
+function getElbowPath(x1, y1, x2, y2, sourcePort, targetPort) {
+  // Smart routing based on port types:
+  // - Bottom→Top (vertical flow): Vertical → Horizontal → Vertical (S-curve)
+  // - Right→Left (horizontal flow): Horizontal → Vertical → Horizontal (S-curve)
+  // - Other cases: Use distance-based routing
 
   const dx = x2 - x1;
   const dy = y2 - y1;
 
-  // If more horizontal distance, route vertically first
-  if (Math.abs(dx) > Math.abs(dy)) {
-    const midY = y1 + dy * 0.5;
+  // Calculate midpoints for 3-segment path
+  const midX = x1 + dx * 0.5;
+  const midY = y1 + dy * 0.5;
+
+  // Detect port-based routing pattern
+  const isVerticalFlow = (sourcePort === 'bottom' && targetPort === 'top') ||
+                        (sourcePort === 'top' && targetPort === 'bottom');
+  const isHorizontalFlow = (sourcePort === 'right' && targetPort === 'left') ||
+                          (sourcePort === 'left' && targetPort === 'right');
+
+  if (isVerticalFlow) {
+    // Vertical → Horizontal → Vertical (S-curve for top-to-bottom flow)
     return `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
-  } else {
-    // Otherwise route horizontally first
-    const midX = x1 + dx * 0.5;
+  } else if (isHorizontalFlow) {
+    // Horizontal → Vertical → Horizontal (S-curve for left-to-right flow)
     return `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+  } else {
+    // Mixed/diagonal connections: use distance-based routing
+    if (Math.abs(dx) > Math.abs(dy)) {
+      const midY = y1 + dy * 0.5;
+      return `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
+    } else {
+      const midX = x1 + dx * 0.5;
+      return `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+    }
   }
 }
 
