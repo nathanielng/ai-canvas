@@ -7,6 +7,7 @@ export default function ObjectNode({
   onMouseDown,
   onDelete,
   onUpdateProperties,
+  onDuplicate,
 }) {
   const headerStyle = {
     background: 'var(--color-surface)',
@@ -186,6 +187,13 @@ export default function ObjectNode({
             boxShadow: 'var(--shadow-small)',
           }}
         >
+          <button
+            className="btn btn-small"
+            onClick={onDuplicate}
+            title="Duplicate (Ctrl+C then Ctrl+V)"
+          >
+            📋 Copy
+          </button>
           <button
             className="btn btn-small btn-danger"
             onClick={onDelete}

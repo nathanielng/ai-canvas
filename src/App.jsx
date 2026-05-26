@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCanvasEngine } from './hooks/useCanvasEngine.js';
 import { useTheme } from './hooks/useTheme.js';
 import Canvas from './components/Canvas.jsx';
@@ -7,6 +7,8 @@ import './App.css';
 
 export default function App() {
   const fileInputRef = useRef(null);
+  const [selectedObject, setSelectedObject] = useState(null);
+  const [clipboard, setClipboard] = useState(null);
   useTheme(); // Initialize theme system
   const {
     canvas,
@@ -19,6 +21,10 @@ export default function App() {
     setLayoutDirection,
     exportCanvas,
     importCanvas,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   } = useCanvasEngine();
 
   // Auto-save on canvas change
@@ -26,6 +32,46 @@ export default function App() {
     const timer = setTimeout(autoSave, 500);
     return () => clearTimeout(timer);
   }, [canvas, autoSave]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Skip if typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        redo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        e.preventDefault();
+        if (selectedObject) {
+          const obj = canvas.objects.find((o) => o.id === selectedObject);
+          if (obj) {
+            setClipboard(JSON.parse(JSON.stringify(obj)));
+          }
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        e.preventDefault();
+        if (clipboard) {
+          createObject(clipboard.type, clipboard.position.x + 20, clipboard.position.y + 20, {
+            ...clipboard.properties,
+          });
+        }
+      } else if (e.key === 'Delete' && selectedObject) {
+        e.preventDefault();
+        deleteObject(selectedObject);
+        setSelectedObject(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo, selectedObject, deleteObject, canvas.objects, clipboard, createObject]);
 
   const handleSaveToFile = () => {
     const data = exportCanvas();
@@ -66,6 +112,22 @@ export default function App() {
           {canvas.metadata.layoutDirection}
         </div>
         <div className="header-actions">
+          <button
+            className="btn btn-secondary"
+            onClick={undo}
+            disabled={!canUndo}
+            title="Undo (Ctrl+Z)"
+          >
+            ↶ Undo
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={redo}
+            disabled={!canRedo}
+            title="Redo (Ctrl+Y)"
+          >
+            ↷ Redo
+          </button>
           <button className="btn btn-primary" onClick={handleSaveToFile}>
             💾 Save
           </button>
@@ -90,6 +152,8 @@ export default function App() {
           onDeleteObject={deleteObject}
           onAddConnector={addConnector}
           onRemoveConnector={removeConnector}
+          selectedObject={selectedObject}
+          onSelectedObjectChange={setSelectedObject}
         />
         <Sidebar
           canvas={canvas}

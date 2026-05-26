@@ -9,15 +9,16 @@ export default function Canvas({
   onDeleteObject,
   onAddConnector,
   onRemoveConnector,
+  selectedObject,
+  onSelectedObjectChange,
 }) {
   const [draggingObject, setDraggingObject] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [selectedObject, setSelectedObject] = useState(null);
   const canvasRef = useRef(null);
 
   const handleCanvasMouseDown = (e) => {
     if (e.target === canvasRef.current) {
-      setSelectedObject(null);
+      onSelectedObjectChange(null);
     }
   };
 
@@ -28,7 +29,7 @@ export default function Canvas({
     const object = canvas.objects.find((o) => o.id === objectId);
     if (!object) return;
 
-    setSelectedObject(objectId);
+    onSelectedObjectChange(objectId);
     setDraggingObject(objectId);
     setDragOffset({
       x: e.clientX - object.position.x,
@@ -48,6 +49,15 @@ export default function Canvas({
 
   const handleMouseUp = () => {
     setDraggingObject(null);
+  };
+
+  const handleDuplicate = (objectId) => {
+    const obj = canvas.objects.find((o) => o.id === objectId);
+    if (obj) {
+      onCreateObject(obj.type, obj.position.x + 20, obj.position.y + 20, {
+        ...obj.properties,
+      });
+    }
   };
 
   return (
@@ -108,6 +118,7 @@ export default function Canvas({
           isSelected={selectedObject === object.id}
           onMouseDown={(e) => handleObjectMouseDown(e, object.id)}
           onDelete={() => onDeleteObject(object.id)}
+          onDuplicate={() => handleDuplicate(object.id)}
           onUpdateProperties={(props) =>
             onUpdateObject(object.id, { properties: props })
           }

@@ -106,6 +106,27 @@ body {
   background: var(--color-accent-dark);
 }
 
+.btn-secondary {
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-border);
+  border-color: var(--color-accent);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
 .btn-small {
   padding: 4px 8px;
   font-size: 12px;
