@@ -2,7 +2,7 @@
 
 const SCHEMA_VERSION = '1.0';
 
-const OBJECT_TYPES = new Set(['rectangle', 'text', 'container']);
+const OBJECT_TYPES = new Set(['rectangle', 'circle', 'diamond', 'parallelogram', 'text', 'container']);
 
 const KNOWN_PROPERTIES = {
   // Common properties
@@ -28,6 +28,18 @@ const TYPE_DEFAULTS = {
   rectangle: {
     size: { width: 200, height: 150 },
     properties: { fill: '#e8f4f8', stroke: '#333', strokeWidth: 2, opacity: 1 },
+  },
+  circle: {
+    size: { width: 120, height: 120 },
+    properties: { fill: '#e8f4f8', stroke: '#333', strokeWidth: 2, opacity: 1 },
+  },
+  diamond: {
+    size: { width: 140, height: 140 },
+    properties: { fill: '#fff4e6', stroke: '#ff9800', strokeWidth: 2, opacity: 1 },
+  },
+  parallelogram: {
+    size: { width: 200, height: 120 },
+    properties: { fill: '#f3e5f5', stroke: '#9c27b0', strokeWidth: 2, opacity: 1 },
   },
   text: {
     size: { width: 200, height: 50 },

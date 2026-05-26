@@ -86,6 +86,70 @@ export default function ObjectNode({
           </div>
         );
 
+      case 'circle':
+        return (
+          <div
+            className="object-node circle-node"
+            style={{ ...baseStyle, borderRadius: '50%' }}
+            onMouseDown={onMouseDown}
+          >
+            <div style={{ ...headerStyle, borderRadius: 0 }}>
+              <span>{getObjectIcon('circle')} Circle</span>
+            </div>
+            <div style={bodyStyle}>
+              <div style={{ color: 'var(--color-text-muted)' }}>
+                ⭕ Start/End
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'diamond':
+        return (
+          <div
+            className="object-node diamond-node"
+            style={{
+              ...baseStyle,
+              borderRadius: 0,
+              transform: `rotate(45deg)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onMouseDown={onMouseDown}
+          >
+            <div style={{ transform: 'rotate(-45deg)', textAlign: 'center' }}>
+              <div style={{ ...headerStyle, border: 'none', background: 'transparent' }}>
+                <span>{getObjectIcon('diamond')} Decision</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'parallelogram':
+        return (
+          <div
+            className="object-node parallelogram-node"
+            style={{
+              ...baseStyle,
+              borderRadius: 0,
+              transform: `skewX(-20deg)`,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            onMouseDown={onMouseDown}
+          >
+            <div style={{ ...headerStyle, transform: `skewX(20deg)` }}>
+              <span>{getObjectIcon('parallelogram')} I/O</span>
+            </div>
+            <div style={{ ...bodyStyle, transform: `skewX(20deg)` }}>
+              <div style={{ color: 'var(--color-text-muted)' }}>
+                Input/Output
+              </div>
+            </div>
+          </div>
+        );
+
       case 'rectangle':
       default:
         return (

@@ -20,20 +20,44 @@ export default function Sidebar({ canvas, onCreateObject, onSetLayoutDirection }
           <button
             className="btn btn-block"
             onClick={() => handleAddObject('rectangle')}
+            title="Process box"
           >
-            Rectangle
+            📦 Rectangle
+          </button>
+          <button
+            className="btn btn-block"
+            onClick={() => handleAddObject('circle')}
+            title="Start/End node"
+          >
+            ⭕ Circle
+          </button>
+          <button
+            className="btn btn-block"
+            onClick={() => handleAddObject('diamond')}
+            title="Decision node"
+          >
+            ◊ Diamond
+          </button>
+          <button
+            className="btn btn-block"
+            onClick={() => handleAddObject('parallelogram')}
+            title="Input/Output"
+          >
+            ▶ Parallelogram
           </button>
           <button
             className="btn btn-block"
             onClick={() => handleAddObject('text')}
+            title="Text label"
           >
-            Text
+            📝 Text
           </button>
           <button
             className="btn btn-block"
             onClick={() => handleAddObject('container')}
+            title="Group objects"
           >
-            Container
+            🗂️ Container
           </button>
         </div>
       </section>
