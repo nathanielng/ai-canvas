@@ -168,40 +168,72 @@ export default function ObjectNode({
     }
   };
 
+  const renderDragHandle = (position) => {
+    return (
+      <div
+        key={`handle-${position}`}
+        className="drag-handle"
+        style={{
+          position: 'absolute',
+          width: '10px',
+          height: '10px',
+          borderRadius: '50%',
+          background: 'var(--color-accent)',
+          border: '2px solid var(--color-background)',
+          cursor: 'grab',
+          ...(() => {
+            const handlePositions = {
+              'top-left': { left: '-5px', top: '-5px' },
+              'top-right': { right: '-5px', top: '-5px' },
+              'bottom-left': { left: '-5px', bottom: '-5px' },
+              'bottom-right': { right: '-5px', bottom: '-5px' },
+            };
+            return handlePositions[position] || {};
+          })(),
+        }}
+      />
+    );
+  };
+
   return (
     <>
       {renderObject()}
       {isSelected && (
-        <div
-          className="object-controls"
-          style={{
-            position: 'absolute',
-            left: `${object.position.x}px`,
-            top: `${object.position.y - 35}px`,
-            display: 'flex',
-            gap: '6px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'calc(var(--border-radius) / 2)',
-            padding: '4px 6px',
-            boxShadow: 'var(--shadow-small)',
-          }}
-        >
-          <button
-            className="btn btn-small"
-            onClick={onDuplicate}
-            title="Duplicate (Ctrl+C then Ctrl+V)"
+        <>
+          {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((pos) =>
+            renderDragHandle(pos)
+          )}
+          <div
+            className="object-controls"
+            style={{
+              position: 'absolute',
+              left: `${object.position.x}px`,
+              top: `${object.position.y - 35}px`,
+              display: 'flex',
+              gap: '6px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'calc(var(--border-radius) / 2)',
+              padding: '4px 6px',
+              boxShadow: 'var(--shadow-small)',
+            }}
           >
-            📋 Copy
-          </button>
-          <button
-            className="btn btn-small btn-danger"
-            onClick={onDelete}
-            title="Delete (Delete key)"
-          >
-            🗑 Delete
-          </button>
-        </div>
+            <button
+              className="btn btn-small"
+              onClick={onDuplicate}
+              title="Duplicate (Ctrl+C then Ctrl+V)"
+            >
+              📋 Copy
+            </button>
+            <button
+              className="btn btn-small btn-danger"
+              onClick={onDelete}
+              title="Delete (Delete key)"
+            >
+              🗑 Delete
+            </button>
+          </div>
+        </>
       )}
     </>
   );

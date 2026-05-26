@@ -26,6 +26,23 @@
   /* Styled by inline styles */
 }
 
+.drag-handle {
+  transition: all 0.2s ease;
+  box-shadow: 0 0 0 0 rgba(74, 158, 255, 0.3);
+}
+
+.drag-handle:hover {
+  width: 12px !important;
+  height: 12px !important;
+  margin: -1px;
+  box-shadow: 0 0 8px rgba(74, 158, 255, 0.6);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  transform: scale(1.2);
+}
+
 .object-controls {
   z-index: 1000;
   background: var(--color-surface);
