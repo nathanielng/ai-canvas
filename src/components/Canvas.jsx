@@ -4,6 +4,7 @@ import '../styles/Canvas.css';
 
 export default function Canvas({
   canvas,
+  layoutDirection,
   onCreateObject,
   onUpdateObject,
   onDeleteObject,
@@ -58,6 +59,11 @@ export default function Canvas({
         ...obj.properties,
       });
     }
+  };
+
+  const handleStartConnection = (sourceObjectId, sourcePortId, event) => {
+    // TODO: Implement connection drag logic
+    console.log('Start connection from:', sourceObjectId, sourcePortId);
   };
 
   return (
@@ -115,10 +121,12 @@ export default function Canvas({
         <ObjectNode
           key={object.id}
           object={object}
+          layoutDirection={layoutDirection}
           isSelected={selectedObject === object.id}
           onMouseDown={(e) => handleObjectMouseDown(e, object.id)}
           onDelete={() => onDeleteObject(object.id)}
           onDuplicate={() => handleDuplicate(object.id)}
+          onStartConnection={handleStartConnection}
           onUpdateProperties={(props) =>
             onUpdateObject(object.id, { properties: props })
           }

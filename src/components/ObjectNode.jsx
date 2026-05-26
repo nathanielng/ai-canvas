@@ -3,11 +3,13 @@ import { getObjectIcon } from '../utils/icons.js';
 
 export default function ObjectNode({
   object,
+  layoutDirection = 'top-to-bottom',
   isSelected,
   onMouseDown,
   onDelete,
   onUpdateProperties,
   onDuplicate,
+  onStartConnection,
 }) {
   const headerStyle = {
     background: 'var(--color-surface)',
@@ -44,6 +46,70 @@ export default function ObjectNode({
     display: 'flex',
     flexDirection: 'column',
     transition: 'box-shadow 0.2s ease',
+  };
+
+  const renderConnectorPorts = () => {
+    const ports = [];
+    const portRadius = 6;
+    const portColor = '#6fb3ff'; // Slightly lighter accent
+
+    if (layoutDirection === 'top-to-bottom') {
+      // Top port
+      ports.push({
+        id: 'top',
+        x: object.position.x + object.size.width / 2,
+        y: object.position.y - portRadius,
+      });
+      // Bottom port
+      ports.push({
+        id: 'bottom',
+        x: object.position.x + object.size.width / 2,
+        y: object.position.y + object.size.height + portRadius,
+      });
+    } else if (layoutDirection === 'left-to-right') {
+      // Left port
+      ports.push({
+        id: 'left',
+        x: object.position.x - portRadius,
+        y: object.position.y + object.size.height / 2,
+      });
+      // Right port
+      ports.push({
+        id: 'right',
+        x: object.position.x + object.size.width + portRadius,
+        y: object.position.y + object.size.height / 2,
+      });
+    }
+
+    const shouldShowPorts = isSelected; // Show on selection
+
+    return shouldShowPorts
+      ? ports.map((port) => (
+          <div
+            key={`port-${port.id}`}
+            className="connector-port"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              if (onStartConnection) {
+                onStartConnection(object.id, port.id, e);
+              }
+            }}
+            style={{
+              position: 'absolute',
+              left: `${port.x}px`,
+              top: `${port.y}px`,
+              width: `${portRadius * 2}px`,
+              height: `${portRadius * 2}px`,
+              borderRadius: '50%',
+              background: portColor,
+              border: '2px solid var(--color-background)',
+              cursor: 'crosshair',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 999,
+            }}
+          />
+        ))
+      : null;
   };
 
   const renderObject = () => {
@@ -198,6 +264,7 @@ export default function ObjectNode({
   return (
     <>
       {renderObject()}
+      {renderConnectorPorts()}
       {isSelected && (
         <>
           {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((pos) =>

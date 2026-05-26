@@ -147,6 +147,7 @@ export default function App() {
       <div className="workspace">
         <Canvas
           canvas={canvas}
+          layoutDirection={canvas.metadata.layoutDirection}
           onCreateObject={createObject}
           onUpdateObject={updateObject}
           onDeleteObject={deleteObject}
