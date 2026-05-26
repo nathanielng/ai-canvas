@@ -223,6 +223,7 @@ export default function Canvas({
     <div
       ref={canvasRef}
       className="canvas"
+      style={spacePressed ? { cursor: 'grab' } : {}}
       onMouseDown={handleCanvasMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
