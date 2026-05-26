@@ -64,6 +64,14 @@ node cli/index.js object:list mydiagram.json
 3. **Connect objects**: Drag from one object to another
 4. **Save/Load**: Use 💾 Save and 📂 Load buttons to persist diagrams
 
+**Keyboard Shortcuts**:
+- **Ctrl+Z** / **Cmd+Z**: Undo last action
+- **Ctrl+Y** / **Cmd+Y**: Redo action
+- **Ctrl+C** / **Cmd+C**: Copy selected object
+- **Ctrl+V** / **Cmd+V**: Paste copied object (20px offset)
+- **Delete**: Remove selected object
+- **Click on canvas**: Deselect all objects
+
 ### CLI
 
 ```bash
@@ -292,18 +300,24 @@ node cli/index.js object:list test.json
 - 11 skill functions
 - 15/15 tests passing
 
-### Phase 3 🚀 (In Progress)
+### Phase 3 ✅ (Complete)
 - **Phase 3A ✅**: Theme system, professional node styling
 - **Phase 3B ✅**: Additional shapes (circle, diamond, parallelogram)
-- **Phase 3C**: Interaction polish
-  - Double-click text editing
-  - Copy/paste (Ctrl+C/V)
-  - Undo/redo (Ctrl+Z/Y)
-  - Keyboard shortcuts
-  - Snap-to-grid
+- **Phase 3C ✅**: Interaction polish
+  - Undo/redo (Ctrl+Z/Y) with history tracking (50 states)
+  - Copy/paste (Ctrl+C/V) with 20px offset
+  - Delete key to remove selected objects
+  - Keyboard shortcuts for all operations
+  - Copy button on object controls
+  - Disabled state for undo/redo buttons when unavailable
+  - Future: Double-click text editing, snap-to-grid
 
-### Phase 4+ (Future)
-- Advanced layout algorithms
+### Phase 4 (Future)
+- Double-click text editing (in-place editing)
+- Snap-to-grid alignment
+- Multi-select with Ctrl+A
+- Undo/redo for all operations
+- Advanced layout algorithms (auto-arrange, distribute)
 - Multi-user collaboration
 - Export formats (PNG, SVG, PDF)
 - Skill gallery (web parser, code analyzer, etc.)
